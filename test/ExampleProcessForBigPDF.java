@@ -4,7 +4,7 @@ import com.lowagie.text.DocumentException;
 import com.xplore.pdf.PDFPaging;
 
 
-public class PDFPagingTest {
+public class ExampleProcessForBigPDF {
 
 	/**
 	 * @param args

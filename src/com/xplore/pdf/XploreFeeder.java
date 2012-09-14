@@ -11,23 +11,16 @@ import com.lowagie.text.DocumentException;
 public class XploreFeeder {
 	/**
 	 * @param args
+	 * @throws DocumentException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
-		String filename = "C:/task/task16-pdfpage/pdfmanager/test.pdf";
-		PDFPaging p = new PDFPaging(filename);
-		try {
-			p.pagingPDF();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		int pageNumber = p.getPage();
+	public static void main(String[] args) throws IOException, DocumentException {
 		
 		//1.1 cut pdf to pages
-		
+		String filename = "C:/task/task16-pdfpage/pdfmanager/test.pdf";
+		PDFPaging p = new PDFPaging(filename);
+		p.pagingPDF();
+		int pageNumber = p.getPage();
 		
 		
 		//1.2 feed in batch
@@ -41,10 +34,12 @@ public class XploreFeeder {
 	
 		
 		//1.3 search
-		
+		String query = "";
+		//get result
 		
 		
 		//1.4 result rearrange
+		
 		
 	}
 	
