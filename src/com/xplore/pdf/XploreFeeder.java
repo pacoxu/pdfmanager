@@ -17,30 +17,34 @@ public class XploreFeeder {
 	public static void main(String[] args) throws IOException, DocumentException {
 		
 		//1.1 cut pdf to pages
-		String filename = "C:/task/task16-pdfpage/pdfmanager/test.pdf";
-		PDFPaging p = new PDFPaging(filename);
+//		String filename = "C:/task/task16-pdfpage/pdfmanager/resource/20080407_Alfresco.pdf";
+		if(args == null){
+			System.out.println("XploreFeeder need a filepath as an input!");
+			System.out.println("*.pdf");
+		}
+		if(!args[0].toLowerCase().endsWith(".pdf")){
+			System.out.println("The file need to be PDF document.");
+		}
+		if(!new File(args[0]).exists()){
+			System.out.println("Cannot find file "+args[0]+"in file system");
+		}
+		PDFPaging p = new PDFPaging(args[0]);
 		p.pagingPDF();
 		int pageNumber = p.getPage();
+		System.out.println(args[0]+" has been cut into "+pageNumber +" pages");
 		
 		
 		//1.2 feed in batch
 		//ArrayList<String> fl = new ArrayList<String>();
-		String[] fl = new String[pageNumber];
-		for (int i = 1; i <= pageNumber; i++) {
-			fl[i-1] = filename + "-page-"+i+".pdf";
-		}
-		XploreFeeder t = new XploreFeeder();
-		t.feedPages("10.37.10.223", 9300, "Pass123", fl);
-	
-		
-		//1.3 search
-		String query = "";
-		//get result
 		
 		
-		//1.4 result rearrange
-		
-		
+//		String[] fl = new String[pageNumber];
+//		for (int i = 1; i <= pageNumber; i++) {
+//			fl[i-1] = args[0] + "-page-"+i+".pdf";
+//		}
+//		XploreFeeder t = new XploreFeeder();		
+//		t.feedPages("10.37.10.223", 9300, "Pass123", fl);
+
 	}
 	
 	public void feedPages(String host, int port, String password, String[] fl){
@@ -50,9 +54,9 @@ public class XploreFeeder {
 		} catch (DSearchAdminException e) {
 			System.out.println("@@ catch exception");
 		}
-		String domain = "ImageDomain";
-		String collection = "picCollection";
-		String category = "picxml";		
+		String domain = "pdfDomain";
+		String collection = "pdfCollection";
+		String category = "dftxml";		
 		String result = "";
 		for(String filepath: fl){
 			try {

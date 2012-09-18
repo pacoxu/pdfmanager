@@ -18,6 +18,32 @@ import com.lowagie.text.pdf.PdfWriter;
 
 public class PDFPaging {
 	
+	public static void main(String[] args) throws IOException, DocumentException {
+		cutPDF(args);
+	}
+
+	public	static void cutPDF(String[] args) throws IOException, DocumentException{
+		long start = System.currentTimeMillis();
+		//1.1 cut pdf to pages
+//		String filename = "C:/task/task16-pdfpage/pdfmanager/resource/20080407_Alfresco.pdf";
+		if(args == null || args.length == 0){
+			System.out.println("XploreFeeder need a filepath as an input!");
+			System.out.println("*.pdf");
+		}
+		if(!args[0].toLowerCase().endsWith(".pdf")){
+			System.out.println("The file need to be PDF document.");
+		}
+		if(!new File(args[0]).exists()){
+			System.out.println("Cannot find file "+args[0]+"in file system");
+		}
+		PDFPaging p = new PDFPaging(args[0]);
+		p.pagingPDF();
+		int pageNumber = p.getPage();
+		System.out.println(args[0]+" has been cut into "+pageNumber +" pages");
+		System.out.println("It spent "+ (System.currentTimeMillis()-start) + " ms to do so.");
+
+	}
+	
 	private String filepath;
 //	String fileName;
 	private int page;
@@ -31,21 +57,23 @@ public class PDFPaging {
 	}
 
 	public PDFPaging( String filepath){
-		File f = new File(filepath);
 		this.filepath = filepath;
 	}
+
 	
+	//small pdf
 	public void pagingPDF() throws IOException, DocumentException{
-        PdfReader template1 = new PdfReader(filepath);
-        page = template1.getNumberOfPages();
+        PdfReader template = new PdfReader(filepath);
+        ByteArrayOutputStream opsTemp = new ByteArrayOutputStream();
+        PdfStamper stamp = new PdfStamper(template, opsTemp);
+
+        String filePrex = filepath.substring(0, filepath.length() - 4 );
+        page = template.getNumberOfPages();
         for (int i = 1; i <= page; i++) {
-            PdfReader template = new PdfReader(filepath);
             Document document = new Document(PageSize.LETTER, 0, 0, 0,0 );
             document.open();
-            OutputStream ops = new FileOutputStream(filepath+"-page-"+i+".pdf");
+            OutputStream ops = new FileOutputStream(filePrex + "-page-"+i+".pdf");
             PdfWriter writer = PdfWriter.getInstance(document, ops);
-            ByteArrayOutputStream opsTemp = new ByteArrayOutputStream();
-            PdfStamper stamp = new PdfStamper(template, opsTemp);
             AcroFields form = stamp.getAcroFields();
             form.setField("XXX", "XXX");
             stamp.setFormFlattening(true);
