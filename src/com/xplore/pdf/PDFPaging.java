@@ -29,12 +29,15 @@ public class PDFPaging {
 		if(args == null || args.length == 0){
 			System.out.println("XploreFeeder need a filepath as an input!");
 			System.out.println("*.pdf");
+			return;
 		}
 		if(!args[0].toLowerCase().endsWith(".pdf")){
 			System.out.println("The file need to be PDF document.");
+			return;
 		}
 		if(!new File(args[0]).exists()){
 			System.out.println("Cannot find file "+args[0]+"in file system");
+			return;
 		}
 		PDFPaging p = new PDFPaging(args[0]);
 		p.pagingPDF();
@@ -73,6 +76,7 @@ public class PDFPaging {
             Document document = new Document(PageSize.LETTER, 0, 0, 0,0 );
             document.open();
             OutputStream ops = new FileOutputStream(filePrex + "-page-"+i+".pdf");
+            System.out.println(filePrex + "-page-"+i+".pdf");
             PdfWriter writer = PdfWriter.getInstance(document, ops);
             AcroFields form = stamp.getAcroFields();
             form.setField("XXX", "XXX");
