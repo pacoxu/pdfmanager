@@ -1,5 +1,6 @@
 package com.xplore.pdf;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,13 +22,26 @@ public class AdvancedPDFKnife {
         long start = System.currentTimeMillis();
 		cutPDFintoPages(args[0]);
 		System.out.println("It spent "+ (System.currentTimeMillis()-start) + " ms.");
+		System.out.println("It spent "+ (System.currentTimeMillis()-start)/1000.0 + " s.");
+		System.out.println("It spent "+ (System.currentTimeMillis()-start)/60000.0 + " min.");
 		
 	}
 
 	private static void cutPDFintoPages(String pdfpath) {
+
+        long start = System.currentTimeMillis();
+		
 		//whether the filepath exists
 		//whether it is a file or a directory
 		//whether its format is PDF.
+
+		//File size
+		File tem = new File(pdfpath);
+		long size = tem.length();
+		System.out.println("this pdf's size is "+ size +" bytes.");
+		System.out.println("this pdf's size is "+ size/1000.0 +" KB.");
+		System.out.println("this pdf's size is "+ size/1000000.0 +" MB.");
+
 		
 		PdfReader reader = null;
 		try {
@@ -37,6 +51,7 @@ public class AdvancedPDFKnife {
 			System.out.println(e.getMessage());
 		}
         int page = reader.getNumberOfPages();
+		System.out.println("this pdf have "+page+" pages.");
         
         Document document = null;  
 		PdfCopy copy = null;  
@@ -47,10 +62,10 @@ public class AdvancedPDFKnife {
 			ArrayList<String> savepaths = new ArrayList<String>();  
 			for( int i = 1; i <= page;  i ++ )  
 			{  
-				savePre = directory + savePre + "-page-" + i + ".pdf";  
-				savepaths.add(savePre);                      
+				String savePath = directory + savePre + "-page-" + i + ".pdf";  
+				savepaths.add(savePath);                      
 			}     
-			for( int i = 0; i < page; i++)  
+			for( int i = 1; i < page; i++)  
 			{
 				document = new Document(reader.getPageSize(1));  
 				copy = new PdfCopy(document, new FileOutputStream(savepaths.get(i)));             

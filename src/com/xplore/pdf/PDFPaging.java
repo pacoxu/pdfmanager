@@ -107,50 +107,62 @@ public class PDFPaging {
 	//big pdf
 	private static int N;  
 
-	public static void partitionPdfFile(String pdfpath)  
+	public static void partitionPdfFile(String filepath)  
 	{  
-		//whether the filepath exists
-		//whether it is a file or a directory
-		//whether its format is PDF.
-		
-		PdfReader reader = null;
-		try {
-			//before it format the file path // \ /
-			reader = new PdfReader(pdfpath);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-        int page = reader.getNumberOfPages();
-        
-        Document document = null;  
+		Document document = null;  
 		PdfCopy copy = null;  
+
 		try   
 		{  
-			String directory = pdfpath.substring(0, pdfpath.lastIndexOf("\\")+1); 
-			String savePre = pdfpath.substring(pdfpath.lastIndexOf("\\")+1, pdfpath.length()-4);  
-			ArrayList<String> savepaths = new ArrayList<String>();  
-			for( int i = 1; i <= page;  i ++ )  
+			PdfReader reader = new PdfReader(filepath);  
+
+			int n = reader.getNumberOfPages();  
+
+			if(n < N)  
 			{  
-				savePre = directory + savePre + "-page-" + i + ".pdf";  
-				savepaths.add(savePre);                      
-			}     
-			for( int i = 0; i < page; i++)  
-			{
+				System.out.println("The document does not have " + N + " pages to partition !");  
+				return;  
+			}  
+
+			int size = n/N;           
+			String staticpath = filepath.substring(0, filepath.lastIndexOf("\\")+1);              
+			String savepath = null;  
+			ArrayList<String> savepaths = new ArrayList<String>();  
+			for(int i=1; i<=N; i++)  
+			{  
+				savepath = filepath.substring(filepath.lastIndexOf("\\")+1, filepath.length()-4);  
+				savepath = staticpath + savepath + "-page-" + i + ".pdf";  
+				savepaths.add(savepath);                      
+			}             
+			for(int i=0; i<N-1; i++)  
+			{  
 				document = new Document(reader.getPageSize(1));  
 				copy = new PdfCopy(document, new FileOutputStream(savepaths.get(i)));             
 				document.open();  
-				document.newPage();   
-				PdfImportedPage pagei = copy.getImportedPage(reader, i);  
-				copy.addPage(pagei);  
+				for(int j=size*i+1; j<=size*(i+1); j++)  
+				{  
+					document.newPage();   
+					PdfImportedPage page = copy.getImportedPage(reader, j);  
+					copy.addPage(page);  
+				}  
 				document.close();  
 			}  
-		}
-		catch (IOException e)
-		{  
+
+
+			document = new Document(reader.getPageSize(1));  
+			copy = new PdfCopy(document, new FileOutputStream(savepaths.get(N-1)));  
+			document.open();  
+			for(int j=size*(N-1)+1; j<=n; j++)  
+			{  
+				document.newPage();   
+				PdfImportedPage page = copy.getImportedPage(reader, j);  
+				copy.addPage(page);  
+			}  
+			document.close();  
+
+		} catch (IOException e) {  
 			e.printStackTrace();  
-		}
-		catch(DocumentException e) 
-		{  
+		} catch(DocumentException e) {  
 			e.printStackTrace();  
 		}  
 	}  
