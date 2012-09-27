@@ -14,20 +14,22 @@ public class AdvancedPDFKnife {
 
 	
 	/**
-	 * @param args
+	 * @param args[0] is the PDF file path
+	 * @param args[1] is the password for the PDF
 	 */
 	public static void main(String[] args) {
-		if(args[0] == null){
-			System.out.println("Need the pdf filepath as argument");
+		if(args.length == 0 ){
+			System.out.println("Need a pdf filepath as argument");
 			return;
 		}
-
+		
+		
 		//File size
 		getFileSize(args[0]);
 		
 		long start = System.currentTimeMillis();
 		//cut PDF
-		cutPDFintoPages(args[0]);
+		cutPDFintoPages(args);
 		long time  = System.currentTimeMillis() - start;
 		if(time < 1000)
 			System.out.println("It spent "+ time + " ms.");
@@ -51,17 +53,27 @@ public class AdvancedPDFKnife {
 		return size;		
 	}
 
-	private static void cutPDFintoPages(String pdfpath) {
+	private static void cutPDFintoPages(String[] args) {
 
-		
 		//whether the filepath exists
 		//whether it is a file or a directory
 		//whether its format is PDF.
-
+		String pdfpath = args[0];
 		PdfReader reader = null;
-		try {
-			//before it format the file path // \ /
-			reader = new PdfReader(pdfpath);
+		try 
+		{
+			if(args.length > 1)
+			{
+				byte[] password = args[1].getBytes();
+				//args[1] is the password
+				reader = new PdfReader(pdfpath, password );
+			}
+			else
+			{
+				//before it format the file path // \ /
+				reader = new PdfReader(pdfpath);
+			}
+				
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
