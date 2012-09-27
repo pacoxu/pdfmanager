@@ -3,7 +3,6 @@ package com.xplore.pdf;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -18,31 +17,47 @@ public class AdvancedPDFKnife {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		if(args[0] == null){
+			System.out.println("Need the pdf filepath as argument");
+			return;
+		}
+
+		//File size
+		getFileSize(args[0]);
 		
-        long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
+		//cut PDF
 		cutPDFintoPages(args[0]);
-		System.out.println("It spent "+ (System.currentTimeMillis()-start) + " ms.");
-		System.out.println("It spent "+ (System.currentTimeMillis()-start)/1000.0 + " s.");
-		System.out.println("It spent "+ (System.currentTimeMillis()-start)/60000.0 + " min.");
+		long time  = System.currentTimeMillis() - start;
+		if(time < 1000)
+			System.out.println("It spent "+ time + " ms.");
+		else if( time < 60000)
+			System.out.println("It spent "+ time/1000.0 + " s.");
+		else 
+			System.out.println("It spent "+ time/60000.0 + " min.");
+	}
 		
+	public static long getFileSize(String filepath){
+		File tem = new File(filepath);
+		long size = tem.length();
+		if(size < 1000)
+			System.out.println("This pdf's size is "+ size +" B.");
+		else if( size < 1000000)
+			System.out.println("This pdf's size is "+ size/1000.0 +" KB.");
+		else if( size < 1000000000)
+			System.out.println("This pdf's size is "+ size/1000000.0 +" MB.");
+		else
+			System.out.println("This pdf's size is "+ size/1000000000.0 +" GB.");
+		return size;		
 	}
 
 	private static void cutPDFintoPages(String pdfpath) {
 
-        long start = System.currentTimeMillis();
 		
 		//whether the filepath exists
 		//whether it is a file or a directory
 		//whether its format is PDF.
 
-		//File size
-		File tem = new File(pdfpath);
-		long size = tem.length();
-		System.out.println("this pdf's size is "+ size +" bytes.");
-		System.out.println("this pdf's size is "+ size/1000.0 +" KB.");
-		System.out.println("this pdf's size is "+ size/1000000.0 +" MB.");
-
-		
 		PdfReader reader = null;
 		try {
 			//before it format the file path // \ /
@@ -59,16 +74,11 @@ public class AdvancedPDFKnife {
 		{  
 			String directory = pdfpath.substring(0, pdfpath.lastIndexOf("\\")+1); 
 			String savePre = pdfpath.substring(pdfpath.lastIndexOf("\\")+1, pdfpath.length()-4);  
-			ArrayList<String> savepaths = new ArrayList<String>();  
 			for( int i = 1; i <= page;  i ++ )  
 			{  
 				String savePath = directory + savePre + "-page-" + i + ".pdf";  
-				savepaths.add(savePath);                      
-			}     
-			for( int i = 1; i < page; i++)  
-			{
 				document = new Document(reader.getPageSize(1));  
-				copy = new PdfCopy(document, new FileOutputStream(savepaths.get(i)));             
+				copy = new PdfCopy(document, new FileOutputStream(savePath));             
 				document.open();  
 				document.newPage();   
 				PdfImportedPage pagei = copy.getImportedPage(reader, i);  
